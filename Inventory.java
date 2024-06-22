@@ -48,4 +48,15 @@ public class Inventory {
     public void deleteOrder(int orderId) {
         orders.remove(orderId);
     }
+
+    public void editOrder(int orderId, String newFlavor, String newSize, double newPrice) {
+        if (orders.containsKey(orderId)) {
+            String[] orderDetails = orders.get(orderId).split(", ");
+            String customerName = orderDetails[0].split(": ")[1];
+            String updatedOrder = "Customer: " + customerName + ", Flavor: " + newFlavor + ", Size: " + newSize + ", Total Price: $" + newPrice;
+            orders.put(orderId, updatedOrder);
+        } else {
+            System.out.println("Order not found.");
+        }
+    }
 }

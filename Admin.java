@@ -11,7 +11,10 @@ public class Admin extends JPanel {
         this.inventory = inventory;
         this.customerPanel = customerPanel;
 
-        setLayout(new GridLayout(5, 1));
+        setLayout(new BorderLayout());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(5, 1, 5, 5));
 
         JButton addFlavorButton = new JButton("Add New Flavor");
         addFlavorButton.addActionListener(new ActionListener() {
@@ -25,7 +28,7 @@ public class Admin extends JPanel {
                 JOptionPane.showMessageDialog(null, "Flavor added.");
             }
         });
-        add(addFlavorButton);
+        buttonPanel.add(addFlavorButton);
 
         JButton editFlavorButton = new JButton("Edit Flavor Price");
         editFlavorButton.addActionListener(new ActionListener() {
@@ -35,10 +38,11 @@ public class Admin extends JPanel {
                 String priceStr = JOptionPane.showInputDialog("Enter new price for " + flavor + ":");
                 double price = Double.parseDouble(priceStr);
                 inventory.updatePrice(flavor, price);
+                customerPanel.updateFlavors(inventory.getFlavors());
                 JOptionPane.showMessageDialog(null, "Price updated.");
             }
         });
-        add(editFlavorButton);
+        buttonPanel.add(editFlavorButton);
 
         JButton viewOrdersButton = new JButton("View Orders");
         viewOrdersButton.addActionListener(new ActionListener() {
@@ -49,7 +53,7 @@ public class Admin extends JPanel {
                 JOptionPane.showMessageDialog(null, new JScrollPane(textArea), "Orders", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        add(viewOrdersButton);
+        buttonPanel.add(viewOrdersButton);
 
         JButton deleteOrderButton = new JButton("Delete an Order");
         deleteOrderButton.addActionListener(new ActionListener() {
@@ -61,6 +65,36 @@ public class Admin extends JPanel {
                 JOptionPane.showMessageDialog(null, "Order deleted.");
             }
         });
-        add(deleteOrderButton);
+        buttonPanel.add(deleteOrderButton);
+
+        JButton editOrderButton = new JButton("Edit an Order");
+        editOrderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String orderIdStr = JOptionPane.showInputDialog("Enter order ID to edit:");
+                int orderId = Integer.parseInt(orderIdStr);
+                String newFlavor = JOptionPane.showInputDialog("Enter new flavor:");
+                String newSize = JOptionPane.showInputDialog("Enter new size (Small/Medium/Large):");
+                String newPriceStr = JOptionPane.showInputDialog("Enter new total price:");
+                double newPrice = Double.parseDouble(newPriceStr);
+                inventory.editOrder(orderId, newFlavor, newSize, newPrice);
+                JOptionPane.showMessageDialog(null, "Order edited.");
+            }
+        });
+        buttonPanel.add(editOrderButton);
+
+        add(buttonPanel, BorderLayout.EAST);
+
+        JTextArea orderTextArea = new JTextArea();
+        orderTextArea.setEditable(false);
+        JScrollPane orderScrollPane = new JScrollPane(orderTextArea);
+        add(orderScrollPane, BorderLayout.CENTER);
+
+        viewOrdersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                orderTextArea.setText(inventory.viewOrders());
+            }
+        });
     }
 }
