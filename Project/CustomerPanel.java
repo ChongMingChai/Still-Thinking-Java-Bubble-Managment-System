@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 
 public class CustomerPanel extends JPanel {
     private JTextField customerNameField;
@@ -44,8 +45,35 @@ public class CustomerPanel extends JPanel {
     }
 
     private void placeOrder(String customerName, String flavor) {
-        String orderDetails = "Customer: " + customerName + ", Flavor: " + flavor + "\n";
+        Order order = new Order(customerName, flavor);
+        String orderDetails = "Customer: " + order.getCustomerName() + ", Flavor: " + order.getFlavor() + "\n";
         orderHistoryArea.append(orderDetails);
         // Save order details to file (binary file handling can be added here)
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Customer Order System");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.add(new CustomerPanel());
+        frame.setVisible(true);
+    }
+}
+
+class Order implements Serializable {
+    private String customerName;
+    private String flavor;
+
+    public Order(String customerName, String flavor) {
+        this.customerName = customerName;
+        this.flavor = flavor;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getFlavor() {
+        return flavor;
     }
 }
