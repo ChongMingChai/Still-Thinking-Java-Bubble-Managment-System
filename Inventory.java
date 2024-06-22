@@ -5,11 +5,16 @@ public class Inventory {
     private Map<String, Double> flavors;
     private Map<Integer, String> orders;
     private int nextOrderId;
+    private Admin adminPanel;
 
     public Inventory() {
         flavors = new HashMap<>();
         orders = new HashMap<>();
         nextOrderId = 1;
+    }
+
+    public void setAdminPanel(Admin adminPanel) {
+        this.adminPanel = adminPanel;
     }
 
     public void addFlavor(String flavor, double price) {
@@ -35,6 +40,9 @@ public class Inventory {
     public void addOrder(String customerName, String flavor, String size, double totalPrice) {
         String order = "Customer: " + customerName + ", Flavor: " + flavor + ", Size: " + size + ", Total Price: $" + totalPrice;
         orders.put(nextOrderId++, order);
+        if (adminPanel != null) {
+            adminPanel.updateOrders();
+        }
     }
 
     public String viewOrders() {
@@ -47,6 +55,9 @@ public class Inventory {
 
     public void deleteOrder(int orderId) {
         orders.remove(orderId);
+        if (adminPanel != null) {
+            adminPanel.updateOrders();
+        }
     }
 
     public void editOrder(int orderId, String newFlavor, String newSize, double newPrice) {
@@ -55,6 +66,9 @@ public class Inventory {
             String customerName = orderDetails[0].split(": ")[1];
             String updatedOrder = "Customer: " + customerName + ", Flavor: " + newFlavor + ", Size: " + newSize + ", Total Price: $" + newPrice;
             orders.put(orderId, updatedOrder);
+            if (adminPanel != null) {
+                adminPanel.updateOrders();
+            }
         } else {
             System.out.println("Order not found.");
         }

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 public class Admin extends JPanel {
     private Inventory inventory;
     private Customer customerPanel;
+    private JTextArea orderTextArea;
 
     public Admin(Inventory inventory, Customer customerPanel) {
         this.inventory = inventory;
@@ -48,9 +49,7 @@ public class Admin extends JPanel {
         viewOrdersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextArea textArea = new JTextArea(inventory.viewOrders());
-                textArea.setEditable(false);
-                JOptionPane.showMessageDialog(null, new JScrollPane(textArea), "Orders", JOptionPane.INFORMATION_MESSAGE);
+                updateOrders();
             }
         });
         buttonPanel.add(viewOrdersButton);
@@ -85,16 +84,15 @@ public class Admin extends JPanel {
 
         add(buttonPanel, BorderLayout.EAST);
 
-        JTextArea orderTextArea = new JTextArea();
+        orderTextArea = new JTextArea();
         orderTextArea.setEditable(false);
         JScrollPane orderScrollPane = new JScrollPane(orderTextArea);
         add(orderScrollPane, BorderLayout.CENTER);
 
-        viewOrdersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                orderTextArea.setText(inventory.viewOrders());
-            }
-        });
+        inventory.setAdminPanel(this);
+    }
+
+    public void updateOrders() {
+        orderTextArea.setText(inventory.viewOrders());
     }
 }
