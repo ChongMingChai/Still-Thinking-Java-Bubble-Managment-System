@@ -26,9 +26,8 @@ public class Customer extends JPanel {
 
         add(customerPanel, BorderLayout.NORTH);
 
-        // Flavor selection with prices
-        flavorList = new JList<>(getFlavorWithPrices(inventory));
-        flavorList.setCellRenderer(new FlavorListRenderer());
+        // Flavor selection without prices
+        flavorList = new JList<>(inventory.getFlavors());
         flavorScrollPane = new JScrollPane(flavorList);
         flavorScrollPane.setPreferredSize(new Dimension(200, 0));
         add(flavorScrollPane, BorderLayout.WEST);
@@ -84,13 +83,14 @@ public class Customer extends JPanel {
                     return;
                 }
 
-                double basePrice = inventory.getPrice(flavor.split(" - ")[0]);
+                int flavorId = inventory.getFlavorId(flavor);
+                double basePrice = inventory.getPrice(flavor);
                 double totalPrice = calculateTotalPrice(basePrice, size);
                 totalLabel.setText("Total Price: $" + totalPrice);
 
                 int confirmation = JOptionPane.showConfirmDialog(null, "Do you want to place the order?", "Confirm Order", JOptionPane.YES_NO_OPTION);
                 if (confirmation == JOptionPane.YES_OPTION) {
-                    inventory.addOrder(customerName, flavor, size, totalPrice);
+                    inventory.addOrder(customerName, flavorId, size, totalPrice);
                     JOptionPane.showMessageDialog(null, "Order placed successfully!");
                 }
             }
@@ -133,7 +133,7 @@ public class Customer extends JPanel {
     private void updateTotalPrice(Inventory inventory) {
         String selectedFlavor = flavorList.getSelectedValue();
         if (selectedFlavor != null) {
-            double basePrice = inventory.getPrice(selectedFlavor.split(" - ")[0]);
+            double basePrice = inventory.getPrice(selectedFlavor);
             String selectedSize = getSelectedSize();
             if (selectedSize != null) {
                 double totalPrice = calculateTotalPrice(basePrice, selectedSize);
@@ -142,27 +142,8 @@ public class Customer extends JPanel {
         }
     }
 
-    private String[] getFlavorWithPrices(Inventory inventory) {
-        String[] flavors = inventory.getFlavors();
-        String[] flavorWithPrices = new String[flavors.length];
-        for (int i = 0; i < flavors.length; i++) {
-            flavorWithPrices[i] = flavors[i] + " - $" + inventory.getPrice(flavors[i]);
-        }
-        return flavorWithPrices;
-    }
-
     // Add this method to update the flavor list when admin makes changes
     public void updateFlavors(String[] flavors) {
         flavorList.setListData(flavors);
-    }
-
-    // Custom list cell renderer to display flavor with price
-    private static class FlavorListRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            setText(value.toString());
-            return component;
-        }
     }
 }
