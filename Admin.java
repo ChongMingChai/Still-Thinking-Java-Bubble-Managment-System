@@ -23,6 +23,10 @@ public class Admin extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String flavor = JOptionPane.showInputDialog("Enter new flavor name:");
+                if (inventory.getFlavorId(flavor) != -1) {
+                    JOptionPane.showMessageDialog(null, "Flavor already exists.");
+                    return;
+                }
                 String priceStr = JOptionPane.showInputDialog("Enter price for " + flavor + ":");
                 double price = Double.parseDouble(priceStr);
                 inventory.addFlavor(flavor, price);

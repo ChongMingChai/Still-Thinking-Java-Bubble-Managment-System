@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,9 @@ public class Inventory {
                 if (parts.length == 2) {
                     String flavor = parts[0];
                     double price = Double.parseDouble(parts[1]);
-                    addFlavor(flavor, price);
+                    if (!flavors.containsKey(flavor)) { // Check if flavor already exists
+                        addFlavor(flavor, price, false); // Add flavor without saving to file
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -43,9 +47,17 @@ public class Inventory {
     }
 
     public void addFlavor(String flavor, double price) {
-        flavors.put(flavor, price);
-        flavorIds.put(nextFlavorId++, flavor);
-        saveFlavorToFile(flavor, price);
+        addFlavor(flavor, price, true); // Add flavor and save to file
+    }
+
+    private void addFlavor(String flavor, double price, boolean saveToFile) {
+        if (!flavors.containsKey(flavor)) { // Check if flavor already exists
+            flavors.put(flavor, price);
+            flavorIds.put(nextFlavorId++, flavor);
+            if (saveToFile) {
+                saveFlavorToFile(flavor, price);
+            }
+        }
     }
 
     private void saveFlavorToFile(String flavor, double price) {

@@ -2,6 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Customer extends JPanel {
     private JList<String> flavorList;
@@ -27,7 +32,8 @@ public class Customer extends JPanel {
         add(customerPanel, BorderLayout.NORTH);
 
         // Flavor selection without prices
-        flavorList = new JList<>(inventory.getFlavors());
+        String[] flavors = loadFlavorsFromFile("flavors.txt");
+        flavorList = new JList<>(flavors);
         flavorScrollPane = new JScrollPane(flavorList);
         flavorScrollPane.setPreferredSize(new Dimension(200, 0));
         add(flavorScrollPane, BorderLayout.WEST);
@@ -110,6 +116,23 @@ public class Customer extends JPanel {
         smallButton.addActionListener(sizeListener);
         mediumButton.addActionListener(sizeListener);
         largeButton.addActionListener(sizeListener);
+    }
+
+    private String[] loadFlavorsFromFile(String filename) {
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            List<String> flavors = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    flavors.add(parts[0]);
+                }
+            }
+            return flavors.toArray(new String[0]);
+        } catch (FileNotFoundException e) {
+            System.out.println("Flavors file not found. Starting with an empty list.");
+            return new String[0];
+        }
     }
 
     private String getSelectedSize() {
