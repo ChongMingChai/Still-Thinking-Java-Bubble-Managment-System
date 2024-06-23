@@ -67,7 +67,15 @@ public class Customer extends JPanel {
         totalLabel = new JLabel("Total Price: $0.00");
         orderPanel.add(totalLabel);
 
-        placeOrderButton = new JButton("Place Order");
+        // Load the image for the button
+        ImageIcon placeOrderIcon = new ImageIcon("placeorder.png");
+        Image img = placeOrderIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH); // Adjust the size as needed
+        placeOrderIcon = new ImageIcon(img);
+
+        placeOrderButton = new JButton("Place Order", placeOrderIcon);
+        placeOrderButton.setHorizontalTextPosition(JButton.RIGHT); // Set text to the right of the icon
+        placeOrderButton.setVerticalTextPosition(JButton.CENTER);
+        placeOrderButton.setIconTextGap(5); // Adjust the gap between icon and text
         placeOrderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

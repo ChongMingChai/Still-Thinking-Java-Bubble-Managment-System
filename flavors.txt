@@ -1,2 +1,3 @@
-Vanilla,11.0
-Choco,4.2
+Vanilla,1.0
+Choco,3.0
+Taco ,3.0

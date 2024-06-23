@@ -181,4 +181,39 @@ public class Inventory {
                 return basePrice;
         }
     }
+
+    public void recordDailySales() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("DailySales.txt", true))) {
+            for (Map.Entry<Integer, String> order : orders.entrySet()) {
+                writer.write(order.getValue());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Failed to record daily sales.");
+        }
+    }
+
+    public String viewSales() {
+        StringBuilder sb = new StringBuilder();
+        double totalSales = 0;
+        int orderCount = 0;
+        for (Map.Entry<Integer, String> order : orders.entrySet()) {
+            sb.append(order.getValue()).append("\n");
+            totalSales += extractPriceFromOrder(order.getValue());
+            orderCount++;
+        }
+        sb.append("Total Orders: ").append(orderCount).append("\n");
+        sb.append("Total Sales: $").append(totalSales).append("\n");
+        return sb.toString();
+    }
+
+    private double extractPriceFromOrder(String order) {
+        String[] parts = order.split(", ");
+        for (String part : parts) {
+            if (part.startsWith("Total Price: $")) {
+                return Double.parseDouble(part.split("\\$")[1]);
+            }
+        }
+        return 0.0;
+    }
 }

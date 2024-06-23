@@ -1,0 +1,3 @@
+Customer: MC, Flavor: Vanilla, Size: Small, Total Price: $1.0
+Customer: YH, Flavor: Choco, Size: Large, Total Price: $5.0
+Customer: JJ, Flavor: Choco, Size: Large, Total Price: $5.0

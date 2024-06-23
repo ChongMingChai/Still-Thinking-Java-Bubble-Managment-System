@@ -16,9 +16,10 @@ public class Admin extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1, 5, 5));
+        buttonPanel.setLayout(new GridLayout(5, 1, 5, 5));
 
         JButton addFlavorButton = new JButton("Add New Flavor");
+        addFlavorButton.setIcon(resizeIcon(new ImageIcon("Add.png"), 20, 20)); // 添加图标
         addFlavorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -37,6 +38,7 @@ public class Admin extends JPanel {
         buttonPanel.add(addFlavorButton);
 
         JButton editFlavorButton = new JButton("Edit Flavor Price");
+        editFlavorButton.setIcon(resizeIcon(new ImageIcon("Edit.png"),20,20)); // 添加图标
         editFlavorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,6 +54,7 @@ public class Admin extends JPanel {
         buttonPanel.add(editFlavorButton);
 
         JButton deleteOrderButton = new JButton("Delete an Order");
+        deleteOrderButton.setIcon(resizeIcon(new ImageIcon("Delete.png"),20,20)); // 添加图标
         deleteOrderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,6 +72,7 @@ public class Admin extends JPanel {
         buttonPanel.add(deleteOrderButton);
 
         JButton editOrderButton = new JButton("Edit an Order");
+        editOrderButton.setIcon(resizeIcon(new ImageIcon("Edit.png"),20,20)); // 添加图标
         editOrderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -76,13 +80,13 @@ public class Admin extends JPanel {
                 if (selectedIndex != -1) {
                     String selectedOrder = orderList.getSelectedValue();
                     int orderId = Integer.parseInt(selectedOrder.split(", ")[0].split(": ")[1]);
-
+        
                     // Create a dialog for editing the order
                     JDialog editDialog = new JDialog();
                     editDialog.setTitle("Edit Order");
                     editDialog.setModal(true);
                     editDialog.setLayout(new BorderLayout());
-
+        
                     // Customer name input
                     JPanel customerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
                     JLabel nameLabel = new JLabel("New Customer Name: ");
@@ -90,33 +94,32 @@ public class Admin extends JPanel {
                     customerPanel.add(nameLabel);
                     customerPanel.add(customerNameField);
                     editDialog.add(customerPanel, BorderLayout.NORTH);
-
+        
                     // Flavor selection
                     JPanel flavorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                    JLabel flavorLabel = new JLabel("Select New Flavor ID: ");
-                    JTextField flavorIdField = new JTextField(5);
+                    JLabel flavorLabel = new JLabel("Select New Flavor: ");
+                    JComboBox<String> flavorComboBox = new JComboBox<>(inventory.getFlavors());
                     flavorPanel.add(flavorLabel);
-                    flavorPanel.add(flavorIdField);
+                    flavorPanel.add(flavorComboBox);
                     editDialog.add(flavorPanel, BorderLayout.CENTER);
-
+        
                     // Size selection
-                    JPanel sizePanel = new JPanel(new GridLayout(4, 1));
-                    sizePanel.setBorder(BorderFactory.createTitledBorder("Select New Size"));
-
+                    JPanel sizePanel = new JPanel(new GridLayout(3, 1));
+                    sizePanel.setBorder(BorderFactory.createTitledBorder("Size"));
+        
                     JRadioButton smallButton = new JRadioButton("Small");
                     JRadioButton mediumButton = new JRadioButton("Medium");
                     JRadioButton largeButton = new JRadioButton("Large");
-
+        
                     ButtonGroup sizeGroup = new ButtonGroup();
                     sizeGroup.add(smallButton);
                     sizeGroup.add(mediumButton);
                     sizeGroup.add(largeButton);
-
+        
                     sizePanel.add(smallButton);
                     sizePanel.add(mediumButton);
                     sizePanel.add(largeButton);
-
-                    editDialog.add(sizePanel, BorderLayout.SOUTH);
+                    editDialog.add(sizePanel, BorderLayout.WEST); 
 
                     // OK and Cancel buttons
                     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -125,7 +128,8 @@ public class Admin extends JPanel {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             String newCustomerName = customerNameField.getText();
-                            int newFlavorId = Integer.parseInt(flavorIdField.getText());
+                            String newFlavor = (String) flavorComboBox.getSelectedItem();
+                            int newFlavorId = inventory.getFlavorId(newFlavor);
                             String newSize = smallButton.isSelected() ? "Small" : mediumButton.isSelected() ? "Medium" : "Large";
                             inventory.editOrder(orderId, newCustomerName, newFlavorId, newSize);
                             JOptionPane.showMessageDialog(null, "Order edited.");
@@ -142,7 +146,7 @@ public class Admin extends JPanel {
                     buttonPanel.add(okButton);
                     buttonPanel.add(cancelButton);
                     editDialog.add(buttonPanel, BorderLayout.SOUTH);
-
+        
                     editDialog.pack();
                     editDialog.setLocationRelativeTo(null);
                     editDialog.setVisible(true);
@@ -152,6 +156,18 @@ public class Admin extends JPanel {
             }
         });
         buttonPanel.add(editOrderButton);
+
+        JButton viewSalesButton = new JButton("View Sales");
+        viewSalesButton.setIcon(resizeIcon(new ImageIcon("View.png"), 20, 20)); // 添加图标
+        viewSalesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inventory.recordDailySales();
+                String salesReport = inventory.viewSales();
+                JOptionPane.showMessageDialog(null, salesReport, "Daily Sales Report", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        buttonPanel.add(viewSalesButton);
 
         add(buttonPanel, BorderLayout.EAST);
 
@@ -172,5 +188,11 @@ public class Admin extends JPanel {
                 orderListModel.addElement(order);
             }
         }
+    }
+    
+    private static ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
+        Image img = icon.getImage();
+        Image resizedImage = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImage);
     }
 }
