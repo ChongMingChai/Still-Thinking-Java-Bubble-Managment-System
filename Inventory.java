@@ -165,8 +165,24 @@ public class Inventory {
             if (adminPanel != null) {
                 adminPanel.updateOrders();
             }
+            recordDailySales(); // Update the DailySales.txt file
         } else {
             System.out.println("Order not found.");
+        }
+    }
+
+    private void updateDailySalesFile() {
+        File dailySalesFile = new File("DailySales.txt");
+        if (dailySalesFile.exists()) {
+            dailySalesFile.delete();
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("DailySales.txt", true))) {
+            for (Map.Entry<Integer, String> order : orders.entrySet()) {
+                writer.write(order.getValue());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Failed to update daily sales file.");
         }
     }
 
@@ -183,6 +199,10 @@ public class Inventory {
     }
 
     public void recordDailySales() {
+        File dailySalesFile = new File("DailySales.txt");
+        if (dailySalesFile.exists()) {
+            dailySalesFile.delete();
+        }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("DailySales.txt", true))) {
             for (Map.Entry<Integer, String> order : orders.entrySet()) {
                 writer.write(order.getValue());
